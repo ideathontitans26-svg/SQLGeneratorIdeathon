@@ -13,7 +13,7 @@ function NavLink({ to, icon: Icon, children }: { to: string; icon: React.Element
     <Link
       to={to}
       className={`flex items-center gap-2 px-4 py-3 rounded-lg transition-colors ${
-        active ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+        active ? 'bg-teal-100 text-teal-700 font-medium' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       }`}
     >
       <Icon size={20} />
@@ -27,8 +27,8 @@ function ProtectedLayout() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-slate-500">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
+        <div className="animate-pulse text-slate-600 font-sans">Loading...</div>
       </div>
     )
   }
@@ -38,18 +38,18 @@ function ProtectedLayout() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-slate-700 bg-slate-900/50">
+    <div className="min-h-screen flex flex-col bg-transparent">
+      <header className="border-b border-slate-200 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-cyan-400">SQL Generator Tool</h1>
+          <h1 className="text-xl font-semibold text-teal-700">SQL Generator Tool</h1>
           <nav className="flex items-center gap-1">
             <NavLink to="/" icon={Database}>Generate</NavLink>
             <NavLink to="/dashboard" icon={LayoutDashboard}>Analytics</NavLink>
             <NavLink to="/history" icon={FileCode}>Query History</NavLink>
-            <span className="text-slate-500 text-sm mx-2">{email}</span>
+            <span className="text-slate-600 text-sm mx-2">{email}</span>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-red-400 transition-colors"
+              className="flex items-center gap-2 px-4 py-3 rounded-lg text-slate-600 hover:bg-red-50 hover:text-red-600 transition-colors"
               title="Sign out"
             >
               <LogOut size={20} />

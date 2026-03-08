@@ -4,12 +4,12 @@ import { api, AnalyticsSummary } from '../api/client'
 
 function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string | number }) {
   return (
-    <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-5">
-      <div className="flex items-center gap-2 text-slate-400 mb-1">
+    <div className="rounded-xl border border-slate-200 bg-white/80 shadow-sm p-5">
+      <div className="flex items-center gap-2 text-slate-600 mb-1">
         <Icon size={18} />
         <span className="text-sm">{label}</span>
       </div>
-      <p className="text-2xl font-semibold text-cyan-400">{value}</p>
+      <p className="text-2xl font-semibold text-teal-700">{value}</p>
     </div>
   )
 }
@@ -31,14 +31,14 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-pulse text-slate-500">Loading analytics...</div>
+        <div className="animate-pulse text-slate-600">Loading analytics...</div>
       </div>
     )
   }
 
   if (error || !data) {
     return (
-      <div className="rounded-lg bg-red-900/30 border border-red-700 px-4 py-3 text-red-300">
+      <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-red-700">
         {error || 'No analytics data'}
       </div>
     )
@@ -51,13 +51,13 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-slate-100">Analytics Dashboard</h2>
-          <p className="text-slate-400 mt-1">Query generation performance and usage metrics</p>
+          <h2 className="text-2xl font-semibold text-slate-800">Analytics Dashboard</h2>
+          <p className="text-slate-600 mt-1">Query generation performance and usage metrics</p>
         </div>
         <select
           value={days}
           onChange={(e) => setDays(Number(e.target.value))}
-          className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-600 text-slate-200"
+          className="px-4 py-2 rounded-lg bg-white border border-slate-200 text-slate-800"
         >
           <option value={1}>Last 1 day</option>
           <option value={7}>Last 7 days</option>
@@ -76,8 +76,8 @@ export default function Dashboard() {
         />
       </div>
 
-      <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-5">
-        <div className="flex items-center gap-2 text-slate-400 mb-4">
+      <div className="rounded-xl border border-slate-200 bg-white/80 shadow-sm p-5">
+        <div className="flex items-center gap-2 text-slate-600 mb-4">
           <BarChart2 size={18} />
           <span>Queries by Model</span>
         </div>
@@ -85,31 +85,31 @@ export default function Dashboard() {
           <div className="space-y-3">
             {modelEntries.map(([model, count]) => (
               <div key={model} className="flex items-center gap-3">
-                <span className="w-36 text-slate-300 text-sm truncate">
+                <span className="w-36 text-slate-700 text-sm truncate">
                   {model === 'ollama' ? 'Ollama (Local)' : model === 'openai-gpt4' ? 'OpenAI GPT-4' : model === 'anthropic-claude' ? 'Anthropic Claude' : model}
                 </span>
-                <div className="flex-1 h-8 rounded-lg bg-slate-700 overflow-hidden">
+                <div className="flex-1 h-8 rounded-lg bg-slate-100 overflow-hidden">
                   <div
-                    className="h-full bg-cyan-600 rounded-lg transition-all"
+                    className="h-full bg-teal-500 rounded-lg transition-all"
                     style={{ width: `${(count / maxCount) * 100}%` }}
                   />
                 </div>
-                <span className="text-slate-400 text-sm w-12">{count}</span>
+                <span className="text-slate-600 text-sm w-12">{count}</span>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-slate-500">No queries yet. Generate some SQL to see metrics.</p>
+          <p className="text-slate-600">No queries yet. Generate some SQL to see metrics.</p>
         )}
       </div>
 
-      <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-5">
-        <div className="flex items-center gap-2 text-slate-400 mb-4">Recent Queries</div>
+      <div className="rounded-xl border border-slate-200 bg-white/80 shadow-sm p-5">
+        <div className="flex items-center gap-2 text-slate-600 mb-4">Recent Queries</div>
         {data.recent_queries.length ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-slate-500 border-b border-slate-700">
+                <tr className="text-slate-600 border-b border-slate-200">
                   <th className="text-left py-2">Prompt</th>
                   <th className="text-left py-2">Model</th>
                   <th className="text-left py-2">Status</th>
@@ -118,24 +118,24 @@ export default function Dashboard() {
               </thead>
               <tbody>
                 {data.recent_queries.map((q) => (
-                  <tr key={q.id} className="border-b border-slate-700/50">
-                    <td className="py-2 text-slate-300 max-w-xs truncate">{q.prompt}</td>
-                    <td className="py-2 text-slate-400">{q.model_used}</td>
+                  <tr key={q.id} className="border-b border-slate-100">
+                    <td className="py-2 text-slate-700 max-w-xs truncate">{q.prompt}</td>
+                    <td className="py-2 text-slate-600">{q.model_used}</td>
                     <td className="py-2">
                       <span
-                        className={`px-2 py-0.5 rounded text-xs ${q.success ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'}`}
+                        className={`px-2 py-0.5 rounded text-xs ${q.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
                       >
                         {q.success ? 'Success' : 'Failed'}
                       </span>
                     </td>
-                    <td className="py-2 text-slate-500">{q.created_at ? new Date(q.created_at).toLocaleString() : '-'}</td>
+                    <td className="py-2 text-slate-600">{q.created_at ? new Date(q.created_at).toLocaleString() : '-'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p className="text-slate-500">No recent queries.</p>
+          <p className="text-slate-600">No recent queries.</p>
         )}
       </div>
     </div>
