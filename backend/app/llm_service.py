@@ -2,7 +2,7 @@
 import time
 from typing import Optional, Tuple
 
-import google.generativeai as genai
+from google.genai import Client as GenAIClient
 
 from .config import settings
 
@@ -56,27 +56,26 @@ def _parse_sql_from_response(text: str) -> str:
 
 
 async def generate_sql_gemini(prompt: str, schema_info: Optional[str] = None) -> Tuple[str, float]:
-    """Generate SQL using Google Gemini."""
+    """Generate SQL using Google Gemini (google-genai SDK)."""
     if not settings.GEMINI_API_KEY:
         raise ValueError("Gemini API key not configured")
-
-    genai.configure(api_key=settings.GEMINI_API_KEY)
-    model = genai.GenerativeModel("models/gemini-2.5-flash")
 
     user_content = prompt
     if schema_info:
         user_content = f"Schema:\n{schema_info}\n\nUser request: {prompt}"
+    contents = f"{SYSTEM_PROMPT}\n\n{user_content}"
 
+    client = GenAIClient(api_key=settings.GEMINI_API_KEY)
     start = time.perf_counter()
-    resp = await model.generate_content_async(
-        [
-            SYSTEM_PROMPT,
-            user_content,
-        ]
+    # Use the async client directly; do not treat it as an async context manager
+    aclient = client.aio
+    resp = await aclient.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=contents,
     )
     elapsed_ms = (time.perf_counter() - start) * 1000
 
-    text = (resp.text or "").strip()
+    text = (getattr(resp, "text", None) or "").strip()
     sql = _parse_sql_from_response(text)
     return sql, elapsed_ms
 
