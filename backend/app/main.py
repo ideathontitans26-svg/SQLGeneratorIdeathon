@@ -222,9 +222,11 @@ app.include_router(api_router)
 
 # Serve static frontend (production)
 FRONTEND_DIST = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
-if FRONTEND_DIST.exists():
-    app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
+_assets_dir = FRONTEND_DIST / "assets"
+if FRONTEND_DIST.exists() and _assets_dir.exists():
+    app.mount("/assets", StaticFiles(directory=_assets_dir), name="assets")
 
+if FRONTEND_DIST.exists():
     @app.get("/{full_path:path}")
     def serve_spa(full_path: str):
         """Serve index.html for SPA routes; static files for assets."""
