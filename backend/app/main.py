@@ -21,6 +21,7 @@ from .auth import hash_password, verify_password, create_access_token, decode_to
 from .llm_service import generate_sql
 from .analytics import get_analytics_summary
 from .db_connector import extract_schema, validate_connection
+from .config import settings
 
 app = FastAPI(title="SQL Generator Tool", version="1.0.0")
 
@@ -116,8 +117,21 @@ def list_models():
 async def generate_sql_endpoint(req: GenerateSQLRequest, db: Session = Depends(get_db)):
     """Generate SQL from natural language using selected LLM."""
     try:
+        # If no schema was provided by the client, automatically introspect
+        # the application's configured database (DATABASE_URL) and use that
+        # schema for schema-aware SQL generation.
+        schema_info = req.schema_info
+        if not schema_info:
+            schema, err = extract_schema(settings.DATABASE_URL)
+            if err:
+                raise HTTPException(
+                    status_code=500,
+                    detail=f"Failed to introspect database schema: {err}",
+                )
+            schema_info = schema or "{}"
+
         sql, model_used, elapsed_ms = await generate_sql(
-            req.prompt, req.model, req.schema_info
+            req.prompt, req.model, schema_info
         )
         
         record = QueryRecord(
