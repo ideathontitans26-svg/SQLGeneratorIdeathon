@@ -18,8 +18,9 @@ COPY --from=frontend-build /app/dist /app/frontend/dist
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
 # Render sets PORT at runtime; default for local runs
-ENV PORT=8000
-EXPOSE 8000
+# Use 8081 as the default port inside the container to match your local setup.
+ENV PORT=8081
+EXPOSE 8081
 
-# Use shell form so $PORT is expanded; Render injects PORT
-CMD ["/bin/sh", "-c", "cd backend && exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Use shell form so $PORT is expanded; Render injects PORT when deploying
+CMD ["/bin/sh", "-c", "cd backend && exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8081}"]
